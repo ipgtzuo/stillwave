@@ -1,0 +1,44 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# WorkBuddy 工作区私有数据（绝不入库）
+.workbuddy/
+
+# 历史版本快照与开发日志（本地留档，不入库）
+/versions/
+/versions.html
+
+# 本地单文件原型（已被 Xcode 工程取代，历史见 git 提交；根目录锚定，勿伤 KouShui/ 内同名文件）
+/BreatheSession.swift
+/HapticScore.swift
+/KouShui-iOS.swift
+/SoftTap.swift
+/release-pressure.html
+/silent-mode.html
+/icon-preview.html
+
+# Xcode
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+*.xcworkspace/xcuserdata/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.build/
+Packages/
+Package.pins
+Package.resolved
+
+# CocoaPods（本工程未用，防御性排除）
+Pods/
+
+# 临时产物
+*.log
+tmp/

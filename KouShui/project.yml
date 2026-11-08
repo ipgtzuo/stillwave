@@ -1,0 +1,121 @@
+# 叩音 · Stillwave — XcodeGen 工程定义
+# 重新生成：在本目录执行 `xcodegen generate`（Homebrew: brew install xcodegen）
+# 生成的 KouShui.xcodeproj 已随工程交付，直接双击即可打开，不需要先装 xcodegen。
+#
+# 结构：两个真实 App（watchOS App 随 iOS App 分发，不需要也不能加入 Universal Purchase）
+#   Stillwave     iOS 17+     Core Haptics / 全屏水面 / 设置页
+#   KouShuiWatch  watchOS 11+ 触觉乐谱 / 默认静音 / 熄屏可用 / 单手
+#   Shared/       两个 target 共享：五音律、心境、景、旋律游走、墨符、合成器
+#
+# DEVELOPMENT_TEAM 已填本机免费 Personal Team（9RH9WL3PQ3），Xcode 里不必再手动选 Team，
+# 换电脑/换账号时只改这一行。Bundle ID 仍是 com.example 占位，上架前换成自己的反向域名。
+
+name: KouShui
+options:
+  bundleIdPrefix: com.example.koushui
+  deploymentTarget:
+    iOS: "17.0"
+    watchOS: "11.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    CLANG_ENABLE_MODULES: YES
+    ALWAYS_SEARCH_USER_PATHS: NO
+    ENABLE_STRICT_OBJC_MSGSEND: YES
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 1.0.0
+    # Xcode 27 的 SwiftUI @State 是 external macro；在受限 CI/沙箱里 swift-plugin-server
+    # 无法再套一层 sandbox-exec，会导致 "produced malformed response"。关掉宏沙箱即可。
+    # 真机 / 正常 Xcode GUI 构建不需要，但留着无害。
+    SWIFT_DISABLE_SANDBOX: YES
+    CODE_SIGN_STYLE: Automatic
+    # 本机实测：Xcode 免费 Personal Team（G.T. Zuo）。写入工程后 GUI 的
+    # "requires a development team" 会消失，自动签名可直接选中此 Team。
+    DEVELOPMENT_TEAM: 9RH9WL3PQ3
+    # 上架前只需要改这两个值：两个 target 的 PRODUCT_BUNDLE_IDENTIFIER 与
+    # Watch Info.plist 的 WKCompanionAppBundleIdentifier 都引用它们，不会各说各话。
+    IOS_BUNDLE_ID: com.example.koushui
+    WATCH_BUNDLE_ID: com.example.koushui.watch
+    # 第一版只做 iPhone（"1"）。若设成 "1,2" 就等于声明支持 iPad，
+    # App Store Connect 会强制要求 13" iPad 截图（2064×2752），徒增上架负担。
+    # iPad 用户仍能以 iPhone 兼容模式运行，但不需要单独截图货架。
+    TARGETED_DEVICE_FAMILY: "1"
+
+targets:
+  Stillwave:
+    type: application
+    platform: iOS
+    sources:
+      - path: Shared
+      - path: iOS
+        excludes:
+          - "Info.plist"
+          - "soft-tap.html"
+      # 网页原型原样打包：iOS 端由 WKWebView 全屏承载，视觉/交互与最初设计一致。
+      # 必须显式标成 resources，否则 XcodeGen 会把 .html 丢进 Compile Sources。
+      - path: iOS/soft-tap.html
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(IOS_BUNDLE_ID)
+        PRODUCT_NAME: Stillwave
+        INFOPLIST_FILE: iOS/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+        SWIFT_EMIT_LOC_STRINGS: YES
+    dependencies:
+      - target: KouShuiWatch
+        embed: true
+
+  KouShuiWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - path: Shared
+      - path: WatchApp
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(WATCH_BUNDLE_ID)
+        PRODUCT_NAME: KouShuiWatch
+        INFOPLIST_FILE: WatchApp/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        WATCHOS_DEPLOYMENT_TARGET: "11.0"
+        TARGETED_DEVICE_FAMILY: "4"
+        # 独立 Watch App：不装 iPhone 端也能从 App Store 直接装到表上
+        SWIFT_EMIT_LOC_STRINGS: YES
+
+# schemes 必须显式声明：XcodeGen 默认不产出 .xcscheme，而 `xcodebuild -scheme`
+# 需要共享 scheme 才能把 iOS 主 App 与嵌入的 Watch App 一起编出来。
+# iOS scheme 只列 Stillwave；Watch App 由 embed 依赖自动带上、用 watchOS SDK 编译。
+# ⚠️ 别把 KouShuiWatch 也列进 iOS scheme 的 build targets —— 那会让 xcodebuild
+#    用 iOS SDK 去编 watchOS target（真编译阶段踩过）。
+schemes:
+  Stillwave:
+    build:
+      targets:
+        Stillwave: all
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+  KouShuiWatch:
+    build:
+      targets:
+        KouShuiWatch: all
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

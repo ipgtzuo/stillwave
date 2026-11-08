@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  web-lint:
+    name: 网页原型语法检查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 抽取 <script> 并做 JS 语法检查
+        run: |
+          python3 - <<'EOF'
+          import re, subprocess, sys, tempfile, os
+          ok = True
+          for f in ("soft-tap.html", "KouShui/iOS/soft-tap.html"):
+              html = open(f, encoding="utf-8").read()
+              scripts = re.findall(r"<script>(.*?)</script>", html, re.S)
+              js = "\n".join(scripts)
+              fd, path = tempfile.mkstemp(suffix=".js")
+              with os.fdopen(fd, "w") as fh:
+                  fh.write(js)
+              r = subprocess.run(["node", "--check", path], capture_output=True, text=True)
+              if r.returncode != 0:
+                  ok = False
+                  print(f"✗ {f}\n{r.stderr}")
+              else:
+                  print(f"✓ {f}")
+          sys.exit(0 if ok else 1)
+          EOF
+      - name: 校验双端 soft-tap.html 一致
+        run: diff -q soft-tap.html KouShui/iOS/soft-tap.html
+
+  build:
+    name: 编译 iOS + watchOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show Xcode version
+        run: xcodebuild -version
+      - name: Build iOS scheme (含嵌入 Watch App, 免签名)
+        run: |
+          xcodebuild -project KouShui/KouShui.xcodeproj -scheme Stillwave \
+            -destination 'generic/platform=iOS Simulator' -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO -derivedDataPath /tmp/stillwave-ci-dd build
+      - name: Build Watch target
+        run: |
+          xcodebuild -project KouShui/KouShui.xcodeproj -target KouShuiWatch \
+            -sdk watchsimulator -configuration Debug CODE_SIGNING_ALLOWED=NO \
+            ONLY_ACTIVE_ARCH=NO SYMROOT=/tmp/stillwave-ci-watch build

@@ -1,0 +1,65 @@
+{
+  "_note": "App Store Connect 字段速查。带 TODO 的必须替换；bytes 为 UTF-8 字节数，关键词上限 100 字节。核实于 2026-11-08，字段与截图规格以 ASC 当前页面为准。",
+  "product": {
+    "chinese_name": "叩音",
+    "english_name": "Stillwave",
+    "name_note": "已定名「叩音」（kòu yīn），取自陆机《文赋》「课虚无以责有，叩寂寞而求音」末二字，谐音歧义已消除；英文名 Stillwave 不变。仍需 ASC 查重与商标检索。若再次改名，改 Shared/KouShuiModel.swift 的 appName / appDisplayName + 两个 Info.plist + 这里 + ASC 名称。",
+    "icon_concept": "一叩 / One Knock（设计说明用，不是商店名）",
+    "tagline_zh": "一叩一应 · 腕上的片刻安静",
+    "tagline_en": "A knock, a wave, stillness"
+  },
+  "app_record": {
+    "platform": "iOS",
+    "sku": "TODO_KOUYIN_001",
+    "bundle_id": "TODO 改 project.yml 的 IOS_BUNDLE_ID（两个 target 与 Watch plist 都引用它）",
+    "watch_bundle_id": "TODO 改 project.yml 的 WATCH_BUNDLE_ID，必须以 iOS 为前缀",
+    "primary_language": "简体中文",
+    "localizations": ["zh-Hans", "en-US"],
+    "primary_category": "Health & Fitness",
+    "secondary_category": "Lifestyle",
+    "age_rating": "4+（无暴力、无广告、无用户生成内容、无外部链接）",
+    "license_agreement": "标准 EULA",
+    "pricing": "免费，无 App 内购买、无广告、无订阅（第一版最轻审核路径）",
+    "distribution": "iOS App 内含 watchOS counterpart；从同一个 Xcode 项目上传两端构建。watchOS App 不需要也不能加入 Universal Purchase（Apple 官方口径）。",
+    "encryption": "ITSAppUsesNonExemptEncryption = false（两个 Info.plist 已设）"
+  },
+  "localizations": {
+    "zh-Hans": {
+      "name": "叩音",
+      "subtitle": "一叩一应 · 腕上的片刻安静",
+      "subtitle_chars": 14,
+      "promotional_text": "敲下去，水面把刚才那一句轻轻还给你。戴不戴耳机都完整，腕上不出声也能用。",
+      "promotional_text_chars": 36,
+      "keywords": "解压,放松,正念,呼吸,冥想,静心,轻敲,触觉,五音,水墨,专注,情绪,手表,国风",
+      "keywords_bytes": 97,
+      "description": "见 01-商店文案.md 的「中文描述」整段，可直接复制。",
+      "whats_new": "第一个版本：一叩一应、水会回想、四种心境、五套景。",
+      "support_url": "TODO https://yourdomain.com/kouyin/support",
+      "privacy_policy_url": "TODO https://yourdomain.com/kouyin/privacy",
+      "marketing_url": "TODO https://yourdomain.com/kouyin"
+    },
+    "en-US": {
+      "name": "Stillwave",
+      "subtitle": "A knock, a wave, stillness",
+      "subtitle_chars": 26,
+      "promotional_text": "Knock once. The water gives your phrase back to you, softer and farther away.",
+      "keywords": "mindfulness,relax,calm,tap,haptic,pentatonic,ambient,focus,breathing,zen,ink,watch,sound,meditation",
+      "keywords_bytes": 99,
+      "description": "见 01-商店文案.md 的「English Description」整段，可直接复制。",
+      "whats_new": "First release: a knock, an answer, and water that remembers."
+    }
+  },
+  "review_information": {
+    "review_notes": "见 02-审核与隐私.md 的「审核备注」整段，可直接粘贴。",
+    "demo_account": "不需要：无账号、无登录、无服务端",
+    "contact": "TODO 姓名 / 电话 / 邮箱",
+    "notes": "30–60 秒正念练习；mindfulness extended runtime 仅用于熄屏后继续播放触觉节奏；不接 HealthKit；不收集数据；声音默认关闭。"
+  },
+  "build_checklist": {
+    "ios_icon": "iOS/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png（RGB 无 alpha、无圆角）",
+    "watch_icon": "WatchApp/Assets.xcassets/AppIcon.appiconset（全套 watch 尺寸，缺了上传会被拒）",
+    "privacy_manifest": "两个 target 各有 PrivacyInfo.xcprivacy，声明不收集数据、不追踪",
+    "screenshots": "见 05-截图脚本.md；iPhone 与 Apple Watch 两处分别上传",
+    "verified_build": "xcodebuild 双端 BUILD SUCCEEDED（iOS 27.2 / watchOS 27.2 SDK，0 warning）"
+  }
+}

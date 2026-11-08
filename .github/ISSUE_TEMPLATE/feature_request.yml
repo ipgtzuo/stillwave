@@ -1,0 +1,30 @@
+name: ✨ 功能建议
+description: 提一个让这池水更好的想法
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 类型
+      options:
+        - 新的「景」（背景视觉）
+        - 新的「心境」（曲调风格）
+        - 触觉手感
+        - 声音 / 音乐
+        - 界面 / 交互
+        - 本地化（翻译）
+        - 其他
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: 想法描述
+      description: 它解决什么问题 / 带来什么感受？
+    validations:
+      required: true
+  - type: textarea
+    id: ref
+    attributes:
+      label: 参考
+      description: 参考图 / 参考的 App / 参考的自然现象都行

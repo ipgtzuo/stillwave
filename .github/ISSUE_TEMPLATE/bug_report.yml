@@ -1,0 +1,44 @@
+name: 🐛 Bug 反馈
+description: 报告一个可以复现的问题
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 平台
+      options:
+        - iOS App（iPhone）
+        - watchOS App（Apple Watch）
+        - 网页原型（soft-tap.html）
+        - 其他
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: 系统版本 / 浏览器
+      description: 例：iOS 26.1 iPhone 15 Pro Max，或 watchOS 26.1 Series 12
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 怎么做会触发这个问题？
+      placeholder: |
+        1. 切到「雨夜」景
+        2. 连续快敲 5 次
+        3. ……
+    validations:
+      required: true
+  - type: textarea
+    id: expect
+    attributes:
+      label: 期望 vs 实际
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: 截图 / 录屏 / 日志
+      description: 视觉问题请附截图，触觉问题请描述手感

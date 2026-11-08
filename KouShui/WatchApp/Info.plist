@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>zh_CN</string>
+	<key>CFBundleDisplayName</key>
+	<string>叩音</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<!-- UIDeviceFamily 由 TARGETED_DEVICE_FAMILY = 4 生成，不要写在这里 -->
+	<!-- 必须有：模拟器和真机安装 iOS 包时，installd 会检查嵌入的 Watch App
+	     是否带 WKApplication=true；缺了会直接报「无法安装」并拒绝整个包。 -->
+	<key>WKApplication</key>
+	<true/>
+	<!-- 嵌入 iOS 包时 installd 强制要求：必须指向 iOS 端的 bundle ID。
+	     值引用工程变量 IOS_BUNDLE_ID，上架前只改 project.yml 一处即可。 -->
+	<key>WKCompanionAppBundleIdentifier</key>
+	<string>$(IOS_BUNDLE_ID)</string>
+	<!-- 独立 Watch App：不安装 iPhone 端也能装、也能单独运行 -->
+	<key>WKSupportsRunningWithoutiOSAppInstallation</key>
+	<true/>
+	<!-- 只声明 mindfulness。默认不发声的 30–60 秒正念练习用 extended runtime，
+	     熄屏后仍可播触觉；不要勾 background audio，审核语义对不上。 -->
+	<key>WKBackgroundModes</key>
+	<array>
+		<string>mindfulness</string>
+	</array>
+	<key>NSHumanReadableCopyright</key>
+	<string>叩音 · Stillwave</string>
+</dict>
+</plist>

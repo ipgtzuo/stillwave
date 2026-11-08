@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>叩音 · 上架工作台</title>
+<style>
+  :root { --fg: 214,224,218; --line: rgba(190,214,202,.13); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #080b0c; color: rgba(var(--fg),.88);
+         font-family: "Songti SC","STSong","Noto Serif CJK SC",serif; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 60px 28px 110px; }
+  .eyebrow { font: 10px -apple-system,sans-serif; letter-spacing:6px; opacity:.34; }
+  h1 { font-size: 34px; font-weight:400; letter-spacing:14px; margin:16px 0 8px; }
+  .sub { font-size:13px; opacity:.5; letter-spacing:2px; }
+  .status { display:inline-flex; align-items:center; gap:9px; margin-top:20px; padding:9px 16px;
+            border:1px solid rgba(150,210,180,.28); border-radius:2px; font:11px -apple-system,sans-serif;
+            letter-spacing:2px; color:rgba(178,224,198,.9); }
+  .status::before { content:""; width:6px; height:6px; border-radius:50%; background:#8fd3ad;
+                    box-shadow:0 0 12px rgba(143,211,173,.8); }
+  .quick { display:flex; flex-wrap:wrap; gap:10px; margin:34px 0 56px; }
+  .quick a { font:11px -apple-system,sans-serif; letter-spacing:2px; padding:11px 16px; text-decoration:none;
+             color:rgba(var(--fg),.6); border:1px solid var(--line); border-radius:2px; transition:.3s; }
+  .quick a:hover { color:#080b0c; background:rgba(196,224,208,.86); border-color:transparent; }
+  .sec { font:10px -apple-system,sans-serif; letter-spacing:5px; opacity:.32;
+         border-bottom:1px solid var(--line); padding-bottom:12px; margin:52px 0 22px; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .card { border:1px solid var(--line); border-radius:3px; padding:20px 18px; background:rgba(190,214,202,.02); }
+  .card h3 { margin:0 0 10px; font-size:16px; font-weight:400; letter-spacing:3px; }
+  .card p { margin:0; font-size:12px; line-height:1.95; opacity:.5; }
+  .card .k { font:10px -apple-system,sans-serif; letter-spacing:2px; opacity:.34; display:block; margin-bottom:8px; }
+  .card a { color:rgba(178,224,198,.75); text-decoration:none; border-bottom:1px dotted rgba(178,224,198,.35); }
+  .names { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .name-box { border:1px solid var(--line); padding:24px; border-radius:3px; }
+  .name-box .big { font-size:28px; letter-spacing:10px; margin:6px 0 10px; }
+  .name-box .sm { font-size:11px; opacity:.45; line-height:1.9; font-family:-apple-system,sans-serif; }
+  .warn { border-left:2px solid rgba(226,178,120,.55); padding-left:14px; margin-top:16px;
+          font-size:12px; line-height:2; opacity:.62; }
+  .timeline { border-left:1px solid var(--line); margin-left:8px; padding-left:24px; }
+  .t { position:relative; padding:0 0 22px; }
+  .t::before { content:""; position:absolute; left:-29px; top:7px; width:7px; height:7px; border-radius:50%;
+               background:#0d1213; border:1px solid rgba(190,214,202,.5); }
+  .t .when { font:10px -apple-system,sans-serif; letter-spacing:3px; opacity:.38; }
+  .t .what { font-size:13px; line-height:1.9; margin-top:5px; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  th,td { text-align:left; padding:12px 10px; border-bottom:1px solid rgba(190,214,202,.08); }
+  th { font:10px -apple-system,sans-serif; letter-spacing:2px; opacity:.34; font-weight:400; }
+  td { opacity:.62; line-height:1.8; }
+  code { font:11px ui-monospace,Menlo,monospace; color:rgba(178,224,198,.8); }
+  .note { margin-top:54px; font:11px -apple-system,sans-serif; line-height:2.1; opacity:.34;
+          border-left:1px solid var(--line); padding-left:16px; }
+  @media (max-width:720px){ .grid,.names{grid-template-columns:1fr} .wrap{padding:40px 20px 80px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">KOU YIN / APP STORE KIT</div>
+  <h1>叩 音</h1>
+  <div class="sub">一叩一应 · 腕上的片刻安静　／　Stillwave — A knock, a wave, stillness</div>
+  <div class="status">工程已就绪 · iOS + watchOS 双端 BUILD SUCCEEDED · arm64 真机编译 0 warning</div>
+
+  <div class="quick">
+    <a href="KouShui/AppStore/06-真机试装.md">▶ 先装到手机</a>
+    <a href="KouShui/README.md">工程说明</a>
+    <a href="KouShui/AppStore/metadata.json">元数据速查</a>
+    <a href="KouShui/AppStore/01-商店文案.md">商店文案</a>
+    <a href="KouShui/AppStore/02-审核与隐私.md">审核与隐私</a>
+    <a href="KouShui/AppStore/03-发布流程.md">发布流程</a>
+    <a href="KouShui/AppStore/04-推广计划.md">推广计划</a>
+    <a href="KouShui/AppStore/05-截图脚本.md">截图规格</a>
+    <a href="icon-preview.html">图标与命名预览</a>
+  </div>
+
+  <div class="sec">下一步 / NEXT</div>
+  <div class="grid">
+    <div class="card" style="border-color:rgba(143,211,173,.35)"><span class="k">NOW · 视觉已还原到真机</span><h3>WebView 版已装上手机</h3>
+      <p>真机反馈原生重写视觉走样后，iOS 端改为 <b>WKWebView 承载网页原型（零改动）+ 原生 Core Haptics 桥接</b>：新包已签名安装并启动成功，真机截图确认水面、月影、五音柱、回想墨符与原型一致；商店首屏截图已同步重拍。待真机确认<b>敲击触感</b>后进入上架主线。审核备注已补第 7 条应对 4.2「套壳网页」质疑（见 <a href="KouShui/AppStore/02-审核与隐私.md">审核与隐私</a>）。免费签名 7 天有效（2026-11-14 到期）。</p></div>
+    <div class="card"><span class="k">VERIFY · 模拟器给不了</span><h3>真机才验得了的五件事</h3>
+      <p>Core Haptics 四种材质的柔软度、Watch 熄屏后触觉是否续播、勿扰态是否静默跳过、「水在回想」无声时是否仍可感知、连续敲 5 分钟的耗电与发热。</p></div>
+    <div class="card"><span class="k">THEN · 回到主线</span><h3>手感定稿再上架</h3>
+      <p>按真机反馈调参 → 用真机重拍商店截图（现有首屏来自模拟器）→ 名称「叩音 / Stillwave」在 ASC 查重 → 付费账号 → TestFlight → 提审。</p></div>
+  </div>
+
+  <div class="sec">命名 / NAME</div>
+  <div class="names">
+    <div class="name-box"><span class="k">中文 · 商店名（2 字 / 30）</span><div class="big">叩音</div>
+      <div class="sm">出自陆机《文赋》「课虚无以责有，叩寂寞而求音」，取末二字。<br>副标：一叩一应 · 腕上的片刻安静</div></div>
+    <div class="name-box"><span class="k">ENGLISH · APP NAME</span><div class="big">Stillwave</div>
+      <div class="sm">still + wave 造词，避开 Knock Water 直译与 knock on wood 联想。<br>Subtitle: A knock, a wave, stillness</div></div>
+  </div>
+  <div class="warn">命名已定：<b>叩音</b>（kòu yīn）直接取自「课虚无以责有，叩寂寞而求音」末二字——静里一叩，才有音；既点出五音与触觉乐谱，也彻底避开了旧名的谐音问题。英文名 <b>Stillwave</b> 不变，中文说「音」、英文说「静与波」。图标概念名「一叩 / One Knock」只用于设计说明，不是商店名；仍须在 App Store Connect 正式查重与商标检索。</div>
+
+  <div class="sec">工程 / PROJECT</div>
+  <div class="grid">
+    <div class="card"><span class="k">TARGETS</span><h3>两个真实 App</h3>
+      <p><code>Stillwave</code>（iOS 17+）与 <code>KouShuiWatch</code>（watchOS 11+），从同一个 Xcode 项目上传。Watch App 有独立 AppIcon、独立 PrivacyInfo，勾了独立安装。</p></div>
+    <div class="card"><span class="k">SHARED</span><h3>同源，不是两份拷贝</h3>
+      <p>五音三分损益律、四心境、五套景、加权旋律游走、五行墨符、合成器放在 <code>Shared/</code>，两端共用。同一句在手机上敲、在表上回想，走向一致。</p></div>
+    <div class="card"><span class="k">SILENT BY DEFAULT</span><h3>腕上不提示戴耳机</h3>
+      <p>声音默认关；曲调由最轻触觉的疏密承载；熄屏用 <code>.mindfulness</code> 续播；勿扰态静默跳过。iPhone 端才用 Core Haptics 真正调柔软度。</p></div>
+  </div>
+
+  <div class="sec">上架材料 / DELIVERABLES</div>
+  <table>
+    <tr><th>文件</th><th>内容</th></tr>
+    <tr><td>metadata.json</td><td>ASC 全字段速查：名称/副标/关键词字节数/分类/定价/审核信息/构建清单，TODO 一目了然</td></tr>
+    <tr><td>01-商店文案.md</td><td>中英文可整段复制的名称、副标、宣传文本、关键词、描述、更新说明；命名风险与改名词位置</td></tr>
+    <tr><td>02-审核与隐私.md</td><td>可直接粘贴的审核备注（中英）、隐私政策全文、支持页 FAQ、年龄分级、常见拒审对照表</td></tr>
+    <tr><td>03-发布流程.md</td><td>必改清单、账号与 App Record、打包上传、TestFlight、提审、分阶段发布、回滚、节奏表</td></tr>
+    <tr><td>04-推广计划.md</td><td>人群、ASO、15 秒无声视频脚本、渠道节奏、首月指标（不看 DAU）、合规红线</td></tr>
+    <tr><td>05-截图脚本.md</td><td>2026 截图规格、6 张 iPhone + 3 张 Watch 构图、模拟器命令、交付自检</td></tr>
+    <tr><td>06-真机试装.md</td><td>免费账号装到手机 / 手表、一键安装脚本、排错速查、真机验证清单（<b>当前这一步</b>）</td></tr>
+  </table>
+
+  <div class="sec">发布流程 / TIMELINE</div>
+  <div class="timeline">
+    <div class="t"><div class="when">T − 21</div><div class="what">开发者账号 / 协议 / 税务就绪；名称查重定稿；隐私与支持页上线公网</div></div>
+    <div class="t"><div class="when">T − 14</div><div class="what">真机内测：Watch 熄屏触觉、勿扰静默、耗电；图标上真机主屏确认</div></div>
+    <div class="t"><div class="when">T − 10</div><div class="what">截图与 15 秒演示录屏定稿；全站文案过一遍疗效红线</div></div>
+    <div class="t"><div class="when">T − 7</div><div class="what">上传首个 build，TestFlight 外部测试；填完两个本地化的元数据</div></div>
+    <div class="t"><div class="when">T − 3</div><div class="what">提交审核（附审核备注与体验步骤）</div></div>
+    <div class="t"><div class="when">T − 0</div><div class="what">手动发布 + 分阶段放量；推广物料同步上线</div></div>
+    <div class="t"><div class="when">T + 1 / 7 / 30</div><div class="what">看崩溃、评分、评论关键词、回想触发率；决定 1.1 只改一件事</div></div>
+  </div>
+
+  <div class="sec">两条已纠正的事实 / CORRECTIONS</div>
+  <div class="grid">
+    <div class="card"><span class="k">UNIVERSAL PURCHASE</span><h3>Watch 不需要它</h3>
+      <p>Apple 官方：配套有 iOS App 的 watchOS App 已包含在同一个 Xcode 项目，<b>无需添加至通用购买</b>；仅 Watch 的 App 也不能加入。Universal Purchase 只在以后做 macOS / tvOS / visionOS 时才用。</p></div>
+    <div class="card"><span class="k">SCREENSHOTS</span><h3>不要赌一套 iPhone 尺寸</h3>
+      <p>2026 年不同资料对必填集合表述不一致。稳妥做法：同时传 1206×2622 与 1320×2868；Watch 用单一尺寸 422×514 且所有本地化一致。上传前以 ASC 的 Screenshot Specifications 为准。</p></div>
+    <div class="card"><span class="k">COMPLIANCE</span><h3>只说做了什么</h3>
+      <p>描述、截图、视频字幕、评论区都不得出现缓解焦虑、改善睡眠、降低血压、调理脏腑、五音疗疾。五行墨符只是视觉符号。</p></div>
+  </div>
+
+  <div class="note">
+    当前卡点（2026-11-08 02:46 实测）：iPhone 15 Pro Max 已用 USB 连上并在线、开发者模式已开启；但本机 Xcode 未登录 Apple ID、钥匙串 0 个签名证书、无描述文件。真实执行安装脚本后，签名步骤两个 target 都报 <code>Signing for … requires a development team</code>，装不上——<b>唯一剩下的动作是你在 Xcode → Settings → Accounts 登录 Apple ID（免费 Personal Team 即可）</b>。arm64 真机免签名编译已通过，脚本与设备都没问题。登录后零参数重跑脚本即可，见 <a href="KouShui/AppStore/06-真机试装.md" style="color:rgba(178,224,198,.75)">06-真机试装.md</a> 与 <code>scripts/install-device.sh</code>。<br>
+    工程验证：Xcode 27.2 / iOS 27.2 / watchOS 27.2 SDK，两个 target 均 BUILD SUCCEEDED、0 warning；产物含 Stillwave.app 与嵌入的 KouShuiWatch.app。图标 PNG 已校验 1024×1024、RGB 无 alpha、无圆角。<br>
+    真编译 / 真安装推翻过五处旧骨架的假设：AVAudioUnitDelay 在 watchOS 不可用、Core Haptics 参数名是 attackTime/decayTime、watchOS 图标必须补全套尺寸、Watch plist 必须带 WKApplication 与 WKCompanionAppBundleIdentifier、iOS 首屏原本太暗已调亮。<br>
+    已在 iPhone 17 模拟器真实启动并截出首屏（1206×2622，另附无 alpha 的 JPG）：<a href="KouShui/AppStore/screenshots/iphone-01-home.jpg" style="color:rgba(178,224,198,.75)">查看示例截图</a>。其余交互态截图需真机或 UI Test 驱动。<br>
+    仍未验证：真机 Core Haptics 手感、Watch 熄屏触觉、勿扰态与耗电；名称查重与商标检索。
+  </div>
+</div>
+</body>
+</html>

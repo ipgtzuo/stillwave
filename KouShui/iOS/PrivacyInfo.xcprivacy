@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- 第一版：不收集任何数据、不追踪、不联网、无账号、无第三方 SDK -->
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+	<!-- 未使用 UserDefaults / FileModificationDate / SystemBootTime / DiskSpace / ActiveKeyboards -->
+	<!-- 若以后给设置页加持久化，需在此补 NSPrivacyAccessedAPITypes: UserDefaults (CA92.1) -->
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array/>
+</dict>
+</plist>

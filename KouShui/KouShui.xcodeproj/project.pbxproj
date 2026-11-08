@@ -1,0 +1,504 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		21E44D4A448978E577F260C1 /* Overlays.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB4864722FF681736461F7E /* Overlays.swift */; };
+		239E7AEC8F86CCBDC868402A /* StillwaveApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2341A78364307598F02AAB8 /* StillwaveApp.swift */; };
+		56ED8C36E64A7BDC7187A614 /* SoftTone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277FC5427FA651FBDAB7511B /* SoftTone.swift */; };
+		615A7E0B64A7476D49741E14 /* KouShuiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABAB92CA3BF16722B2A6E3B5 /* KouShuiModel.swift */; };
+		714EE960535BB33EFCA9A08F /* Overlays.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB4864722FF681736461F7E /* Overlays.swift */; };
+		7A68B6FFD6CB70CCD95C0477 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 18E58EAF5B9F257CBF9DAF28 /* PrivacyInfo.xcprivacy */; };
+		808DD013FE0136253C48110A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0499624ABD80054A32BCA0DE /* Assets.xcassets */; };
+		8166BD3EB3846BCC8A585699 /* KouShuiWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = BCDEC8734A6E3D051FEA8916 /* KouShuiWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9FAE86EDDC6F86CD7405581D /* soft-tap.html in Resources */ = {isa = PBXBuildFile; fileRef = 44D82882BD842A710168E276 /* soft-tap.html */; };
+		A3B4E80613F4EB9A84B98DD5 /* HapticScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96149F5250AFE5DC0D572D47 /* HapticScore.swift */; };
+		BE2EBB93B0C23272F14BFFDA /* SoftTapWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48FFA7FE403BA87B1E370E16 /* SoftTapWatch.swift */; };
+		C77180EDA1A8F547229A3BEF /* WuxingGlyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DEBB9C014C44ADB9894B87 /* WuxingGlyph.swift */; };
+		D84ED7136857CB2BB911ABA2 /* WuxingGlyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DEBB9C014C44ADB9894B87 /* WuxingGlyph.swift */; };
+		E6379F44129D6A1D9E7CC7F7 /* SoftTone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277FC5427FA651FBDAB7511B /* SoftTone.swift */; };
+		EE06D7F6816D655FC44FEA0F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DB4EDC3B9A43B9D234354764 /* PrivacyInfo.xcprivacy */; };
+		F45E2D9E92AAE2A625C04409 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3BD360B728F250120C688062 /* Assets.xcassets */; };
+		F5336513BA30098C10F8232F /* KouShuiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABAB92CA3BF16722B2A6E3B5 /* KouShuiModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3F2871F4F18C41DA801A7FCD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8635AD89855B6DA4B86440C5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E10C681E79317357BF06C399;
+			remoteInfo = KouShuiWatch;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4C107CE6EB92BEE41C28DBA4 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				8166BD3EB3846BCC8A585699 /* KouShuiWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0499624ABD80054A32BCA0DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		18E58EAF5B9F257CBF9DAF28 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		277FC5427FA651FBDAB7511B /* SoftTone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftTone.swift; sourceTree = "<group>"; };
+		2FB4864722FF681736461F7E /* Overlays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Overlays.swift; sourceTree = "<group>"; };
+		3BD360B728F250120C688062 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		44D82882BD842A710168E276 /* soft-tap.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "soft-tap.html"; sourceTree = "<group>"; };
+		48FFA7FE403BA87B1E370E16 /* SoftTapWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftTapWatch.swift; sourceTree = "<group>"; };
+		4E6724EF94F38691DD8AE0CC /* Stillwave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stillwave.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		96149F5250AFE5DC0D572D47 /* HapticScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticScore.swift; sourceTree = "<group>"; };
+		ABAB92CA3BF16722B2A6E3B5 /* KouShuiModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KouShuiModel.swift; sourceTree = "<group>"; };
+		BCDEC8734A6E3D051FEA8916 /* KouShuiWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KouShuiWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4DEBB9C014C44ADB9894B87 /* WuxingGlyph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WuxingGlyph.swift; sourceTree = "<group>"; };
+		DB4EDC3B9A43B9D234354764 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E2341A78364307598F02AAB8 /* StillwaveApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StillwaveApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		243BDA2D56ACDEAA5E840AFE /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				3BD360B728F250120C688062 /* Assets.xcassets */,
+				18E58EAF5B9F257CBF9DAF28 /* PrivacyInfo.xcprivacy */,
+				44D82882BD842A710168E276 /* soft-tap.html */,
+				E2341A78364307598F02AAB8 /* StillwaveApp.swift */,
+			);
+			path = iOS;
+			sourceTree = "<group>";
+		};
+		435756587B9C33A4AF75910A /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				ABAB92CA3BF16722B2A6E3B5 /* KouShuiModel.swift */,
+				2FB4864722FF681736461F7E /* Overlays.swift */,
+				277FC5427FA651FBDAB7511B /* SoftTone.swift */,
+				C4DEBB9C014C44ADB9894B87 /* WuxingGlyph.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		5F6979558C20B6A83584204D = {
+			isa = PBXGroup;
+			children = (
+				243BDA2D56ACDEAA5E840AFE /* iOS */,
+				435756587B9C33A4AF75910A /* Shared */,
+				E44FD9BB7A112D519354B387 /* WatchApp */,
+				B67B72F963D6BC52328E4B93 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B67B72F963D6BC52328E4B93 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BCDEC8734A6E3D051FEA8916 /* KouShuiWatch.app */,
+				4E6724EF94F38691DD8AE0CC /* Stillwave.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E44FD9BB7A112D519354B387 /* WatchApp */ = {
+			isa = PBXGroup;
+			children = (
+				0499624ABD80054A32BCA0DE /* Assets.xcassets */,
+				96149F5250AFE5DC0D572D47 /* HapticScore.swift */,
+				DB4EDC3B9A43B9D234354764 /* PrivacyInfo.xcprivacy */,
+				48FFA7FE403BA87B1E370E16 /* SoftTapWatch.swift */,
+			);
+			path = WatchApp;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C9B390CB7FE35FB49FC07D24 /* Stillwave */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CDF3865C123416CEE32978CC /* Build configuration list for PBXNativeTarget "Stillwave" */;
+			buildPhases = (
+				649E97DE5AEED88107285FAA /* Sources */,
+				550D67CE2B77795490F9245E /* Resources */,
+				4C107CE6EB92BEE41C28DBA4 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				24DE2FDE76F3C5E257F068A4 /* PBXTargetDependency */,
+			);
+			name = Stillwave;
+			packageProductDependencies = (
+			);
+			productName = Stillwave;
+			productReference = 4E6724EF94F38691DD8AE0CC /* Stillwave.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E10C681E79317357BF06C399 /* KouShuiWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2059369762C1344EF2B87DB9 /* Build configuration list for PBXNativeTarget "KouShuiWatch" */;
+			buildPhases = (
+				65D87AA1F41EA13AF814DD10 /* Sources */,
+				D2DBBC5140FABCE42BCC3035 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KouShuiWatch;
+			packageProductDependencies = (
+			);
+			productName = KouShuiWatch;
+			productReference = BCDEC8734A6E3D051FEA8916 /* KouShuiWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8635AD89855B6DA4B86440C5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2720;
+				TargetAttributes = {
+					C9B390CB7FE35FB49FC07D24 = {
+						DevelopmentTeam = 9RH9WL3PQ3;
+						ProvisioningStyle = Automatic;
+					};
+					E10C681E79317357BF06C399 = {
+						DevelopmentTeam = 9RH9WL3PQ3;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 1DD448C9A53AD9A159698301 /* Build configuration list for PBXProject "KouShui" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 5F6979558C20B6A83584204D;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = B67B72F963D6BC52328E4B93 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C9B390CB7FE35FB49FC07D24 /* Stillwave */,
+				E10C681E79317357BF06C399 /* KouShuiWatch */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		550D67CE2B77795490F9245E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F45E2D9E92AAE2A625C04409 /* Assets.xcassets in Resources */,
+				7A68B6FFD6CB70CCD95C0477 /* PrivacyInfo.xcprivacy in Resources */,
+				9FAE86EDDC6F86CD7405581D /* soft-tap.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2DBBC5140FABCE42BCC3035 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				808DD013FE0136253C48110A /* Assets.xcassets in Resources */,
+				EE06D7F6816D655FC44FEA0F /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		649E97DE5AEED88107285FAA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F5336513BA30098C10F8232F /* KouShuiModel.swift in Sources */,
+				714EE960535BB33EFCA9A08F /* Overlays.swift in Sources */,
+				56ED8C36E64A7BDC7187A614 /* SoftTone.swift in Sources */,
+				239E7AEC8F86CCBDC868402A /* StillwaveApp.swift in Sources */,
+				D84ED7136857CB2BB911ABA2 /* WuxingGlyph.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		65D87AA1F41EA13AF814DD10 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3B4E80613F4EB9A84B98DD5 /* HapticScore.swift in Sources */,
+				615A7E0B64A7476D49741E14 /* KouShuiModel.swift in Sources */,
+				21E44D4A448978E577F260C1 /* Overlays.swift in Sources */,
+				BE2EBB93B0C23272F14BFFDA /* SoftTapWatch.swift in Sources */,
+				E6379F44129D6A1D9E7CC7F7 /* SoftTone.swift in Sources */,
+				C77180EDA1A8F547229A3BEF /* WuxingGlyph.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		24DE2FDE76F3C5E257F068A4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E10C681E79317357BF06C399 /* KouShuiWatch */;
+			targetProxy = 3F2871F4F18C41DA801A7FCD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		05B445FD09AE10A03B016E8C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = WatchApp/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_BUNDLE_ID)";
+				PRODUCT_NAME = KouShuiWatch;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+			};
+			name = Release;
+		};
+		40578D1BE14B56CA4BFEEDDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = WatchApp/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_BUNDLE_ID)";
+				PRODUCT_NAME = KouShuiWatch;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+			};
+			name = Debug;
+		};
+		4A699F7E6022251132ACE0A5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = iOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(IOS_BUNDLE_ID)";
+				PRODUCT_NAME = Stillwave;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5F56634354A40DF234E3A09E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9RH9WL3PQ3;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IOS_BUNDLE_ID = com.example.koushui;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_DISABLE_SANDBOX = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+				WATCH_BUNDLE_ID = com.example.koushui.watch;
+			};
+			name = Debug;
+		};
+		7DF257F760A4DC095E771297 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = iOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(IOS_BUNDLE_ID)";
+				PRODUCT_NAME = Stillwave;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B7ED5706438268F76FC63507 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9RH9WL3PQ3;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IOS_BUNDLE_ID = com.example.koushui;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_DISABLE_SANDBOX = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+				WATCH_BUNDLE_ID = com.example.koushui.watch;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DD448C9A53AD9A159698301 /* Build configuration list for PBXProject "KouShui" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F56634354A40DF234E3A09E /* Debug */,
+				B7ED5706438268F76FC63507 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		2059369762C1344EF2B87DB9 /* Build configuration list for PBXNativeTarget "KouShuiWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				40578D1BE14B56CA4BFEEDDC /* Debug */,
+				05B445FD09AE10A03B016E8C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CDF3865C123416CEE32978CC /* Build configuration list for PBXNativeTarget "Stillwave" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4A699F7E6022251132ACE0A5 /* Debug */,
+				7DF257F760A4DC095E771297 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8635AD89855B6DA4B86440C5 /* Project object */;
+}
