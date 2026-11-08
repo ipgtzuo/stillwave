@@ -47,7 +47,7 @@ final class SoftHaptics: ObservableObject {
     private var running = false
     private var holdPlayer: CHHapticAdvancedPatternPlayer?
     /// 引擎启动得太早（App 还没激活）会失败；做成惰性的，每次叩击前兜底重试。
-    private let fallbackImpact = UIImpactFeedbackGenerator(style: .soft)
+    private let systemTap = UIImpactFeedbackGenerator(style: .soft)
     private var lastKnock: TimeInterval = 0
 
     init() {
@@ -55,32 +55,92 @@ final class SoftHaptics: ObservableObject {
         let e = try? CHHapticEngine()
         guard let e else { return }
         e.playsHapticsOnly = true
+        // 别让系统在空闲时把引擎收掉：回收后再唤醒的那一下最容易「没有震动」
+        e.isAutoShutdownEnabled = false
         e.stoppedHandler = { [weak self] _ in
-            Task { @MainActor in self?.running = false }
+            Task { @MainActor in
+                self?.running = false
+                self?.holdPlayer = nil
+            }
         }
         e.resetHandler = { [weak self] in
-            Task { @MainActor in self?.running = false }
+            Task { @MainActor in
+                self?.running = false
+                self?.holdPlayer = nil
+                self?.ensureEngine()
+            }
         }
         engine = e
         available = true
-        startEngine()
-        fallbackImpact.prepare()
+        ensureEngine()
+        systemTap.prepare()
+
         // 回到前台时引擎大概率已被系统停掉：主动拉起，第一声就不会丢
         NotificationCenter.default.addObserver(
             forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main
         ) { [weak self] _ in
-            Task { @MainActor in self?.startEngine() }
+            Task { @MainActor in
+                self?.ensureEngine()
+                self?.systemTap.prepare()
+            }
+        }
+        // 被来电 / 别的 App 抢走音频后，中断结束要把引擎接回来，否则之后一路静默
+        NotificationCenter.default.addObserver(
+            forName: AVAudioSession.interruptionNotification, object: nil, queue: .main
+        ) { [weak self] note in
+            Task { @MainActor in
+                guard let raw = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
+                      AVAudioSession.InterruptionType(rawValue: raw) == .ended else { return }
+                self?.ensureEngine()
+            }
+        }
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.endHold() }
         }
     }
 
-    private func startEngine() {
-        guard available, let engine, !running else { return }
-        do { try engine.start(); running = true } catch { running = false }
+    /// 每次叩击都真的问一遍引擎「你还活着吗」，而不是相信一个可能已经过期的
+    /// running 标志位 —— 这是之前「偶尔没震动」的直接原因。
+    @discardableResult
+    private func ensureEngine() -> CHHapticEngine? {
+        guard available, let engine else { return nil }
+        do {
+            try engine.start()
+            running = true
+            return engine
+        } catch {
+            running = false
+            return nil
+        }
     }
 
-    /// 用模式真正发声；失败抛给调用方决定重试 / 退系统轻拍。
-    private func playPattern(_ pattern: CHHapticPattern) throws {
-        guard let engine else { return }
+    /// 引擎被系统停过之后，`stop` + `start` 才能彻底恢复；顺手丢掉失效的 player。
+    @discardableResult
+    private func restartEngine() -> Bool {
+        guard available, let engine else { return false }
+        engine.stop(completionHandler: nil)
+        do {
+            try engine.start()
+            running = true
+            holdPlayer = nil
+            return true
+        } catch {
+            running = false
+            return false
+        }
+    }
+
+    /// Core Haptics 不可用时的兜底：系统轻拍永远不会缺席，只是没那么细腻。
+    private func tapFallback(_ scale: Float) {
+        let value = min(1, max(0.25, CGFloat(scale)))
+        systemTap.impactOccurred(intensity: value)
+        systemTap.prepare()
+    }
+
+    private func play(_ events: [CHHapticEvent], on engine: CHHapticEngine) throws {
+        let pattern = try CHHapticPattern(events: events, parameters: [])
         try engine.makePlayer(with: pattern).start(atTime: CHHapticTimeImmediate)
     }
 
@@ -88,70 +148,77 @@ final class SoftHaptics: ObservableObject {
         let now = Date().timeIntervalSince1970
         let rapid = now - lastKnock < 0.28
         lastKnock = now
-        guard available, let engine else {
-            // Core Haptics 不可用时也不断反馈：退到系统轻拍，保证「触感跟随」
-            guard !echo else { return }
-            fallbackImpact.impactOccurred(intensity: min(1, max(0.3, CGFloat(strength))))
-            fallbackImpact.prepare()
-            return
-        }
-        startEngine()
+
         let s = softness
         let k = Float(degree) / 9.0
         // 网页原型把力度(0…1)一起传过来：重叩更实、轻叩更虚；回想再压低一层。
         let force = min(max(strength, 0.25), 1.25)
-        let scale: Float = (echo ? 0.42 : 1.0) * (long ? 0.8 : 1.0) * force
-        let intensity = CHHapticEventParameter(parameterID: .hapticIntensity,
-                                               value: s.intensity * (0.85 + k * 0.25) * scale)
-        let sharpness = CHHapticEventParameter(parameterID: .hapticSharpness,
-                                               value: s.sharpness * (0.8 + k * 0.4))
+        let scale = (echo ? 0.42 : 1.0) * (long ? 0.8 : 1.0) * force
+
+        // 关键：先把「跟着手指」的那层持续触感收掉再打瞬态。
+        // 否则两层同时压在马达上，一记一记的轻叩会被糊成一条连续的嗡嗡声，
+        // 听起来就是「有的叩击没有震动」。
+        endHold()
+
+        guard let engine = ensureEngine() else {
+            if !echo { tapFallback(scale) }
+            return
+        }
+
+        let intensity = CHHapticEventParameter(
+            parameterID: .hapticIntensity,
+            value: s.intensity * (0.85 + k * 0.25) * scale)
+        let sharpness = CHHapticEventParameter(
+            parameterID: .hapticSharpness,
+            value: s.sharpness * (0.8 + k * 0.4))
         let transient = CHHapticEvent(eventType: .hapticTransient,
                                       parameters: [intensity, sharpness], relativeTime: 0)
         var events: [CHHapticEvent] = [transient]
-        // 余韵持续近 1 秒：连敲时多条长触觉叠在马达上，硬件会整条丢弃——
-        // 这正是「有的叩击没有触感」的主因。快节奏时只留瞬态，余韵封顶 0.4 秒。
+
+        // 余韵持续近 1 秒：连敲时多条长触觉叠在马达上，硬件会整条丢弃。
+        // 快节奏时只留瞬态，余韵封顶 0.34 秒。
         let baseDur = s.duration * (1.15 - Double(k) * 0.3) * (long ? 1.6 : 1.0)
         if !rapid || long {
-            // Core Haptics 的包络参数名是 attackTime / decayTime（不是 hapticAttackTime）
             let attack = CHHapticEventParameter(parameterID: .attackTime, value: s.attack)
             let decay = CHHapticEventParameter(parameterID: .decayTime, value: s.decay)
             let tailIntensity = CHHapticEventParameter(parameterID: .hapticIntensity,
-                                                       value: s.intensity * 0.55 * scale)
+                                                       value: s.intensity * 0.50 * scale)
             events.append(CHHapticEvent(eventType: .hapticContinuous,
                                         parameters: [tailIntensity, sharpness, attack, decay],
-                                        relativeTime: 0.02, duration: min(baseDur, 0.4)))
+                                        relativeTime: 0.02, duration: min(baseDur, 0.34)))
         }
+
         do {
-            try playPattern(try CHHapticPattern(events: events, parameters: []))
+            try play(events, on: engine)
         } catch {
-            // 最常见的失败是引擎被系统停了：重启重试一次，仍失败就退系统轻拍兜底
+            // 最常见原因就是引擎刚被系统停掉：重启后重试一次，仍失败退系统轻拍。
+            guard restartEngine(), let again = ensureEngine() else {
+                if !echo { tapFallback(scale) }
+                return
+            }
             do {
-                try engine.start(); running = true
-                try playPattern(try CHHapticPattern(events: events, parameters: []))
+                try play(events, on: again)
             } catch {
-                if !echo {
-                    fallbackImpact.impactOccurred(intensity: min(1, max(0.25, CGFloat(scale))))
-                    fallbackImpact.prepare()
-                }
+                if !echo { tapFallback(scale) }
             }
         }
     }
 
-    /// 触感跟随：手指一落就垫上一层极轻的「贴着水面」的持续触感，
-    /// 按住蓄长韵时它一直在，抬手即停。1.5 秒上限防消息丢失后常振。
+    /// 触感跟随：手指一落就垫一层极轻的「贴着水面」的持续触感，
+    /// 按住蓄长韵时它一直在，抬手即停，叩击时也会被让位给瞬态。
+    /// 强度压到 0.10：它只该是底噪，不能抢走每一下的「嗒」。
     func beginHold() {
-        guard available, let engine else { return }
-        startEngine()
+        guard let engine = ensureEngine() else { return }
         if holdPlayer == nil {
             let intensity = CHHapticEventParameter(parameterID: .hapticIntensity,
-                                                   value: softness.intensity * 0.22)
+                                                   value: softness.intensity * 0.10)
             let sharpness = CHHapticEventParameter(parameterID: .hapticSharpness,
                                                    value: softness.sharpness * 0.5)
-            let attack = CHHapticEventParameter(parameterID: .attackTime, value: 0.6)
-            let decay = CHHapticEventParameter(parameterID: .decayTime, value: 0.9)
+            let attack = CHHapticEventParameter(parameterID: .attackTime, value: 0.55)
+            let decay = CHHapticEventParameter(parameterID: .decayTime, value: 0.85)
             let hold = CHHapticEvent(eventType: .hapticContinuous,
                                      parameters: [intensity, sharpness, attack, decay],
-                                     relativeTime: 0, duration: 1.5)
+                                     relativeTime: 0, duration: 0.55)
             do {
                 let pattern = try CHHapticPattern(events: [hold], parameters: [])
                 holdPlayer = try engine.makeAdvancedPlayer(with: pattern)
@@ -488,12 +555,19 @@ struct WebPrototypeRoot: View {
 }
 
 enum AudioSessionPolicy {
+    /// 主张一次音频会话。**每次回前台都要重新调** —— 退到后台后会话会被系统
+    /// 取消激活，Web Audio 看着还在跑，实际一点声都出不来（这正是「回后台再
+    /// 进来就没声音」的那一半原因）。
     static func activate() {
         let session = AVAudioSession.sharedInstance()
-        // 原型默认开声，这里沿用；Watch 端仍默认静音、不弹「请戴耳机」。
-        // mixWithOthers：不打断用户正在听的音乐。
-        try? session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
-        try? session.setActive(true)
+        do {
+            // 原型默认开声，这里沿用；Watch 端仍默认静音、不弹「请戴耳机」。
+            // playback：静音键拨到静音也发声；mixWithOthers：不打断用户在听的音乐。
+            try session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
+            try session.setActive(true)
+        } catch {
+            // 会话正被别的 App 占着时会失败，等下一次回前台 / 中断结束再试即可
+        }
     }
 }
 
@@ -540,11 +614,70 @@ private enum BridgeScript {
     """#
 }
 
+// MARK: - 容器的三个生命周期补丁
+//
+// ① 安全区：`--sat/--sab` 以前只在页面加载完成时注入一次。App 退到后台后
+//    WKWebView 的内容进程可能被系统回收，回来时页面重新加载 —— 注入被
+//    `insetsInjected` 挡掉，两个变量回落到 0，标题与「·N」直接顶进灵动岛。
+//    现在改成「每次加载 + 每次安全区变化 + 每次回前台」都重注入。
+// ② 声音：回前台重新激活 AVAudioSession，并让页面 resume 音频上下文。
+//    两个缺一个都是「看得见涟漪，听不见声」。
+// ③ 状态：退后台前存一份页面状态，重载后放回去，计数与心境不会白白清零。
+
+/// 安全区一变就通知原生：转屏、回前台、重新入窗都会触发。
+final class KoushuiWebView: WKWebView {
+    var onSafeAreaChange: (() -> Void)?
+
+    override func safeAreaInsetsDidChange() {
+        super.safeAreaInsetsDidChange()
+        onSafeAreaChange?()
+    }
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        onSafeAreaChange?()
+    }
+}
+
 @MainActor
 final class WebPrototypeCoordinator: NSObject, WKScriptMessageHandler, WKNavigationDelegate {
     private let haptics = SoftHaptics()
     private var lastKnock: TimeInterval = 0
-    private var insetsInjected = false
+    weak var webView: KoushuiWebView?
+    /// 退后台前抓的页面状态 JSON；重载后用它把计数 / 心境 / 景放回去
+    private var snapshot: String?
+    private var pageLoadedOnce = false
+    private var listening = false
+
+    override init() {
+        super.init()
+        listen()
+    }
+
+    private func listen() {
+        guard !listening else { return }
+        listening = true
+        let center = NotificationCenter.default
+        center.addObserver(
+            forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.becameActive() }
+        }
+        center.addObserver(
+            forName: UIApplication.willResignActiveNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.captureState() }
+        }
+        // 来电 / 别的 App 抢走音频后，中断结束必须把会话与上下文一起接回来
+        center.addObserver(
+            forName: AVAudioSession.interruptionNotification, object: nil, queue: .main
+        ) { [weak self] note in
+            let raw = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt
+            let ended = raw.flatMap(AVAudioSession.InterruptionType.init(rawValue:)) == .ended
+            guard ended else { return }
+            Task { @MainActor in self?.reviveAudio() }
+        }
+    }
 
     nonisolated func userContentController(_ userContentController: WKUserContentController,
                                           didReceive message: WKScriptMessage) {
@@ -564,17 +697,72 @@ final class WebPrototypeCoordinator: NSObject, WKScriptMessageHandler, WKNavigat
         }
     }
 
-    /// 页面加载完成后，把真实安全区写进页面的 --sat / --sab 变量：
-    /// 标题让开刘海，底部文字让开 Home 横条。WKWebView 的 CSS px 与 point 一致。
+    /// 页面加载完成：注入安全区、拉起音频，必要时把上次的状态放回去。
     nonisolated func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        Task { @MainActor in
-            guard !self.insetsInjected else { return }
-            self.insetsInjected = true
-            let top = webView.safeAreaInsets.top
-            let bottom = webView.safeAreaInsets.bottom
-            let js = "document.documentElement.style.setProperty('--sat','\(top)px');" +
-                     "document.documentElement.style.setProperty('--sab','\(bottom)px');"
-            _ = try? await webView.evaluateJavaScript(js)
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            if let own = webView as? KoushuiWebView {
+                self.webView = own
+                own.onSafeAreaChange = { [weak self] in
+                    Task { @MainActor in self?.injectInsets(retries: 1) }
+                }
+            }
+            self.injectInsets(retries: 2)
+            self.reviveAudio()
+            // 第二次以后加载 = 页面是被系统回收后重开的，把状态放回去
+            if self.pageLoadedOnce, let json = self.snapshot {
+                let js = "window.__koushui && window.__koushui.restore(\(json))"
+                _ = try? await webView.evaluateJavaScript(js)
+            }
+            self.pageLoadedOnce = true
+        }
+    }
+
+    private func becameActive() {
+        reviveAudio()
+        injectInsets(retries: 2)
+    }
+
+    /// 安全区变了（转屏 / 重新入窗 / 回前台）就重注入一次
+    func safeAreaChanged() {
+        injectInsets(retries: 1)
+    }
+
+    /// 音频复活：系统会话 + 页面里的 AudioContext 都要重新拉起
+    private func reviveAudio() {
+        AudioSessionPolicy.activate()
+        guard let webView else { return }
+        webView.evaluateJavaScript(
+            "window.__koushui && window.__koushui.resumeAudio()", completionHandler: nil)
+    }
+
+    private func captureState() {
+        guard let webView else { return }
+        let js = "window.__koushui ? window.__koushui.stateJSON() : null"
+        webView.evaluateJavaScript(js) { [weak self] value, _ in
+            guard let json = value as? String else { return }
+            Task { @MainActor in self?.snapshot = json }
+        }
+    }
+
+    /// 把真实安全区写进页面的 --sat / --sab：标题让开灵动岛，底部文字让开 Home 横条。
+    /// WKWebView 的 CSS px 与 point 一致。量到 0 且还有重试次数时，稍后再量一次
+    /// （刚加载完 / 刚回前台时 WebView 可能还没进窗口）。
+    private func injectInsets(retries: Int = 0) {
+        guard let webView else { return }
+        let own = webView.safeAreaInsets
+        let win = webView.window?.safeAreaInsets ?? .zero
+        let top = max(own.top, win.top)
+        let bottom = max(own.bottom, win.bottom)
+        let js = "(function(t,b){var d=document.documentElement;"
+            + "d.style.setProperty('--sat',t+'px');"
+            + "d.style.setProperty('--sab',b+'px');})(\(top),\(bottom));"
+        webView.evaluateJavaScript(js, completionHandler: nil)
+        if retries > 0 && (top < 1 || bottom < 1) {
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(nanoseconds: 250_000_000)
+                self?.injectInsets(retries: retries - 1)
+            }
         }
     }
 
@@ -605,7 +793,11 @@ struct WebPrototypeView: UIViewRepresentable {
                                           forMainFrameOnly: true))
         config.userContentController = content
 
-        let webView = WKWebView(frame: .zero, configuration: config)
+        let webView = KoushuiWebView(frame: .zero, configuration: config)
+        context.coordinator.webView = webView
+        webView.onSafeAreaChange = { [weak coordinator = context.coordinator] in
+            Task { @MainActor in coordinator?.safeAreaChanged() }
+        }
         let paper = UIColor(red: 0.020, green: 0.027, blue: 0.035, alpha: 1)
         webView.backgroundColor = paper
         webView.isOpaque = false
