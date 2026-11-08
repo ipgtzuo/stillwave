@@ -722,12 +722,19 @@ function makeNoise(sec) {
   return buf;
 }
 function ensureAudio() {
-  if (ctx) {
+  if (ctx && ctx.state !== 'running') {
     // iOS 把后台回来的上下文置成 'interrupted'（不是 'suspended'），
     // 只判 suspended 会永远停在无声状态。统一按「不等于 running」处理。
-    if (ctx.state !== 'running') { try { ctx.resume(); } catch (e) {} }
-    return;
+    try { ctx.resume(); } catch (e) {}
+    // resume 救不回来（回前台后常见）：弃掉旧上下文。这个函数总是在
+    // 落指的手势里被调用，此刻新建的 AudioContext 一定从 running 开始。
+    if (ctx.state !== 'running') {
+      try { ctx.close(); } catch (e) {}
+      master = null; conv = null; wetGlobal = null; ambience = null;
+      ctx = null;
+    }
   }
+  if (ctx) return;
   try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; return; }
   if (!ctx) return;
   master = ctx.createGain();
@@ -1294,11 +1301,12 @@ requestAnimationFrame(draw);
 // ② 退后台前存一份状态；③ WebView 被系统回收重载后把状态放回去。
 // 单独放一个命名空间，不污染页面已有的全局函数。
 window.__koushui = {
-  // 回前台：iOS 会把 AudioContext 置为 interrupted，只有主动 resume 才恢复
+  // 回前台：iOS 会把 AudioContext 置为 interrupted，只有主动 resume 才恢复。
+  // 返回当前状态字符串，原生健康检查据此判断要不要重建上下文。
   resumeAudio: function () {
-    if (!ctx) return false;
+    if (!ctx) return 'none';
     if (ctx.state !== 'running') { try { ctx.resume(); } catch (e) {} }
-    return ctx.state === 'running';
+    return ctx.state;
   },
   stateJSON: function () {
     return JSON.stringify({

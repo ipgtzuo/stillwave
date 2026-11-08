@@ -49,6 +49,7 @@ final class SoftHaptics: ObservableObject {
     /// 引擎启动得太早（App 还没激活）会失败；做成惰性的，每次叩击前兜底重试。
     private let systemTap = UIImpactFeedbackGenerator(style: .soft)
     private var lastKnock: TimeInterval = 0
+    private let probeEnabled = ProcessInfo.processInfo.arguments.contains("--probe")
 
     init() {
         guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
@@ -190,15 +191,19 @@ final class SoftHaptics: ObservableObject {
 
         do {
             try play(events, on: engine)
+            if probeEnabled { NSLog("[KOUSHUI] haptic=pattern") }
         } catch {
             // 最常见原因就是引擎刚被系统停掉：重启后重试一次，仍失败退系统轻拍。
             guard restartEngine(), let again = ensureEngine() else {
+                if probeEnabled { NSLog("[KOUSHUI] haptic=engine-dead -> fallback") }
                 if !echo { tapFallback(scale) }
                 return
             }
             do {
                 try play(events, on: again)
+                if probeEnabled { NSLog("[KOUSHUI] haptic=pattern-after-restart") }
             } catch {
+                if probeEnabled { NSLog("[KOUSHUI] haptic=play-fail -> fallback") }
                 if !echo { tapFallback(scale) }
             }
         }
@@ -566,7 +571,9 @@ enum AudioSessionPolicy {
             try session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
             try session.setActive(true)
         } catch {
-            // 会话正被别的 App 占着时会失败，等下一次回前台 / 中断结束再试即可
+            // 会话正被别的 App 占着时会失败，等下一次回前台 / 中断结束再试即可；
+            // 留一条日志，真机排障时能立刻看出是会话没拿到
+            NSLog("[KOUSHUI] audio session activate failed: \(error)")
         }
     }
 }
@@ -604,11 +611,33 @@ private enum BridgeScript {
         }
         window.addEventListener('pointerup', function () { post({ hold: 0 }); });
         window.addEventListener('pointercancel', function () { post({ hold: 0 }); });
+        // —— 诊断探针（只在原生传 --probe 启动参数时被调用）——
+        // WKUserScript 与页面脚本同在一个 JS 世界，能直接读到顶层的 let 绑定，
+        // 所以这里能看到 AudioContext 的真实状态。
+        window.__koushuiProbe = function () {
+          try {
+            var st = (typeof ctx !== 'undefined' && ctx) ? ctx.state : 'no-ctx';
+            return JSON.stringify({ audio: st, ready: document.readyState,
+                                    hidden: document.hidden,
+                                    hooked: !!(window.playNote && window.playNote.__koushui) });
+          } catch (e) { return 'PROBE-ERR:' + e.message; }
+        };
+        window.__koushuiDebugTap = function () {
+          try { userTap(window.innerWidth / 2, window.innerHeight / 2); return 'tapped'; }
+          catch (e) { return 'TAP-ERR:' + e.message; }
+        };
         return true;
       }
       if (!hook()) {
         document.addEventListener('DOMContentLoaded', hook);
         window.addEventListener('load', hook);
+        // 页面被系统回收重载时，注入脚本可能跑在 load 事件之后，
+        // 上面两个监听永远等不到：再定时兜底，挂上为止。
+        var tries = 0;
+        var timer = setInterval(function () {
+          tries += 1;
+          if (hook() || tries > 20) { clearInterval(timer); }
+        }, 250);
       }
     })();
     """#
@@ -644,6 +673,8 @@ final class WebPrototypeCoordinator: NSObject, WKScriptMessageHandler, WKNavigat
     private let haptics = SoftHaptics()
     private var lastKnock: TimeInterval = 0
     weak var webView: KoushuiWebView?
+    /// 首次加载的页面地址：健康检查判定页面卡死后按它重新加载
+    var pageURL: URL?
     /// 退后台前抓的页面状态 JSON；重载后用它把计数 / 心境 / 景放回去
     private var snapshot: String?
     private var pageLoadedOnce = false
@@ -721,6 +752,118 @@ final class WebPrototypeCoordinator: NSObject, WKScriptMessageHandler, WKNavigat
     private func becameActive() {
         reviveAudio()
         injectInsets(retries: 2)
+        // 冷启动时 activation 早于页面加载完成，此刻体检必然「不健康」，
+        // 会误判成页面卡死去重载。真正的「退后台再回来」一定发生在
+        // 首次加载完成之后，所以只在那之后体检。
+        if pageLoadedOnce {
+            checkHealthAndRecover()
+            if probeEnabled { runProbe(after: 0.8) }
+        }
+    }
+
+    // MARK: - 回前台健康检查
+    //
+    // 真机上「看着一切正常，却没声也没触感」的元凶是页面进程在后台被系统
+    // 收走后没醒过来：屏幕上还停留在最后一帧，实际 DOM 已经空了 —— 这种
+    // 状态下敲什么都到不了桥。所以每次回前台都做一次体检：
+    //   ① JS 2.5s 内不回话     → 页面卡死 → 重新加载（didFinish 会补安全区、
+    //     恢复计数与心境、拉起音频）
+    //   ② 页面活着但桥没挂上   → 手动补一次 hook 脚本
+    //   ③ 页面活着、桥也在     → 交给 reviveAudio（已在上面做过）
+    private var recoverGeneration = 0
+
+    private func checkHealthAndRecover() {
+        guard let webView else { return }
+        recoverGeneration += 1
+        let generation = recoverGeneration
+        let healthJS = "(function(){try{return JSON.stringify({"
+            + "hooked:(typeof playNote==='function'&&!!playNote.__koushui),"
+            + "api:typeof window.__koushui,"
+            + "ready:document.readyState});}catch(e){return '{}';}})()"
+        webView.evaluateJavaScript(healthJS) { [weak self] value, _ in
+            Task { @MainActor [weak self] in
+                guard let self, self.recoverGeneration == generation else { return }
+                // 页面回话了：立刻作废超时兜底，别让它误触发重载
+                self.recoverGeneration += 1
+                let json = value as? String ?? "{}"
+                let data = json.data(using: .utf8) ?? Data()
+                let obj = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] ?? [:]
+                let hooked = obj["hooked"] as? Bool ?? false
+                let api = obj["api"] as? String ?? "undefined"
+                let ready = obj["ready"] as? String ?? ""
+                if probeEnabled {
+                    NSLog("[KOUSHUI] health hooked=%d api=%@ ready=%@",
+                          hooked ? 1 : 0, api, ready)
+                }
+                if hooked && api == "object" && ready == "complete" { return }
+                if api != "object" || ready != "complete" {
+                    self.reloadPage()
+                } else if !hooked, let webView = self.webView {
+                    // 页面活着但桥没挂上（hook 跑早了）：手动补一次
+                    webView.evaluateJavaScript(BridgeScript.hook, completionHandler: nil)
+                }
+            }
+        }
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 2_500_000_000)
+            guard let self, self.recoverGeneration == generation else { return }
+            // JS 根本没回话：内容进程多半已经没了，直接重载
+            recoverGeneration += 1
+            if probeEnabled { NSLog("[KOUSHUI] health timeout -> reload") }
+            reloadPage()
+        }
+    }
+
+    private func reloadPage() {
+        guard let webView else { return }
+        if let url = pageURL {
+            webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+        } else {
+            webView.reload()
+        }
+    }
+
+    // MARK: 诊断探针（--probe 启动参数才开启）
+    /// 回前台后 0.8s：报会话状态 → 查页面音频状态 → 模拟一次叩击走完整链路 →
+    /// 1.2s 后再查一次。结果全部进 syslog，用
+    /// `xcrun simctl spawn <udid> log show --last 3m --predicate 'eventMessage CONTAINS "KOUSHUI"'`
+    /// 读取。用来回答「回前台后到底是哪一环死了」。
+    private lazy var probeEnabled = ProcessInfo.processInfo.arguments.contains("--probe")
+
+    private func runProbe(after delay: TimeInterval) {
+        let s = AVAudioSession.sharedInstance()
+        NSLog("[KOUSHUI] session category=%@ isActive=%d", s.category.rawValue,
+              s.secondaryAudioShouldBeSilencedHint ? 0 : 1)
+        guard let webView else {
+            NSLog("[KOUSHUI] probe: webView 为 nil")
+            return
+        }
+        // 自省诊断：不依赖注入函数，直接看页面世界里的关键对象都在不在
+        let diag = "(function(){try{return JSON.stringify({"
+            + "playNote:typeof playNote,"
+            + "hooked:(typeof playNote==='function'&&!!playNote.__koushui),"
+            + "koushuiAPI:typeof window.__koushui,"
+            + "probe:typeof window.__koushuiProbe,"
+            + "audioCtx:(typeof ctx!=='undefined'&&ctx)?ctx.state:'none',"
+            + "ready:document.readyState,"
+            + "scripts:document.scripts.length});}catch(e){return 'DIAG-ERR:'+e.message;}})()"
+        webView.evaluateJavaScript(diag) { value, error in
+            NSLog("[KOUSHUI] diag %@", error.map { "JS-ERR \($0)" } ?? "\(value ?? "nil")")
+        }
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+            guard let self, let webView = self.webView else { return }
+            // 模拟一次叩击：走 emit → playNote → 桥 → 原生触觉 的完整链路
+            webView.evaluateJavaScript("window.__koushuiDebugTap ? window.__koushuiDebugTap() : 'no-fn'") {
+                value, error in
+                NSLog("[KOUSHUI] debugTap %@", error.map { "JS-ERR \($0)" } ?? "\(value ?? "nil")")
+            }
+            try? await Task.sleep(nanoseconds: 1_200_000_000)
+            guard let webView = self.webView else { return }
+            webView.evaluateJavaScript(diag) { value, error in
+                NSLog("[KOUSHUI] diag2 %@", error.map { "JS-ERR \($0)" } ?? "\(value ?? "nil")")
+            }
+        }
     }
 
     /// 安全区变了（转屏 / 重新入窗 / 回前台）就重注入一次
@@ -771,6 +914,7 @@ final class WebPrototypeCoordinator: NSObject, WKScriptMessageHandler, WKNavigat
         let now = Date().timeIntervalSince1970
         guard now - lastKnock > 0.018 else { return }
         lastKnock = now
+        if probeEnabled { NSLog("[KOUSHUI] bridge knock d=%d echo=%d", degree, echo ? 1 : 0) }
         haptics.knock(degree: degree, echo: echo, strength: strength, long: long)
     }
 }
@@ -815,6 +959,7 @@ struct WebPrototypeView: UIViewRepresentable {
             assertionFailure("soft-tap.html 未打包进 Copy Bundle Resources")
             return webView
         }
+        context.coordinator.pageURL = url
         webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
         return webView
     }
