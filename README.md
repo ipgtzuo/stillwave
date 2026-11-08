@@ -9,10 +9,12 @@
 一个开源的 iOS + watchOS 解压 App：单手轻叩屏幕，叩出宫商角徵羽五声音阶，
 水面绽开涟漪，腕上响起触觉——**把压力敲进水里**。
 
+[![CI](https://github.com/ipgtzuo/stillwave/actions/workflows/ci.yml/badge.svg)](https://github.com/ipgtzuo/stillwave/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-iOS%2017%2B%20%7C%20watchOS%2011-lightgrey)](#快速开始)
 [![Made with SwiftUI](https://img.shields.io/badge/made%20with-SwiftUI%20%2B%20WebGL-orange)](#三端架构)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![GitHub stars](https://img.shields.io/github/stars/ipgtzuo/stillwave?style=social)](https://github.com/ipgtzuo/stillwave/stargazers)
 
 *English intro below · [中文文档](#快速开始)*
 
@@ -77,7 +79,7 @@
 需要 Xcode 16+（工程 objectVersion 77，本机用 Xcode 27.2 验证，双端 0 warning）：
 
 ```bash
-git clone https://github.com/<你的账号>/stillwave.git
+git clone https://github.com/ipgtzuo/stillwave.git
 cd stillwave/KouShui
 open KouShui.xcodeproj    # 选自己的 Team 后 ⌘R，先跑模拟器
 ```
